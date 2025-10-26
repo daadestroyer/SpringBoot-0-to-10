@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/../introduction_01/pom.xml" />
         <option value="$PROJECT_DIR$/../restclient_03/pom.xml" />
         <option value="$PROJECT_DIR$/../Spring-Security-05-06/pom.xml" />
+        <option value="$PROJECT_DIR$/../Spring-Security-BasicAuth/pom.xml" />
       </list>
     </option>
   </component>
