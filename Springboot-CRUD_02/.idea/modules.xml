@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Springboot-CRUD.iml" filepath="$PROJECT_DIR$/Springboot-CRUD.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../introduction_01/introduction.iml" filepath="$PROJECT_DIR$/../introduction_01/introduction.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../restclient_03/restclient.iml" filepath="$PROJECT_DIR$/../restclient_03/restclient.iml" />
     </modules>
   </component>
 </project>
