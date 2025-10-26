@@ -6,4 +6,4 @@
 
 3. [RestClient](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/restclient_03)
 
-4. [Default Spring Security, Basic Authentication](https://github.com/daadestroyer/SpringBoot-0-to-100/blob/main/Spring-Security-BasicAuth)
+4. [Default Spring Security, Basic Authentication](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/SpringSecurity-BasicAuth_04)
