@@ -4,6 +4,7 @@ import com.example.JWT.dto.PostDto;
 import com.example.JWT.entity.Post;
 import com.example.JWT.exceptions.ResourceNotFoundException;
 import com.example.JWT.repository.PostRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,10 +30,11 @@ public class PostService{
                 .collect(Collectors.toList());
     }
 
-
+    @Transactional
     public PostDto createNewPost(PostDto inputPost) {
         Post postEntity = modelMapper.map(inputPost,Post.class);
-        return modelMapper.map(postRepository.save(postEntity),PostDto.class);
+        Post post = postRepository.save(postEntity);
+        return modelMapper.map(post,PostDto.class);
     }
 
 
