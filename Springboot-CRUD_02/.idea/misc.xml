@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/../Spring-Security-BasicAuth/pom.xml" />
         <option value="$PROJECT_DIR$/../SpringSecurity-BasicAuth_04/pom.xml" />
         <option value="$PROJECT_DIR$/../SpringSecurity-FormLogin_05/pom.xml" />
+        <option value="$PROJECT_DIR$/../JWT_06/pom.xml" />
       </list>
     </option>
   </component>
