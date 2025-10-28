@@ -81,7 +81,6 @@ public class JWTService {
      * Returns roles that were embedded into the token as List<String>.
      * Throws JwtException if token invalid.
      */
-    @SuppressWarnings("unchecked")
     public List<String> getRolesFromToken(String token) throws JwtException {
         Claims claims = parseClaims(token);
         Object raw = claims.get("roles");
