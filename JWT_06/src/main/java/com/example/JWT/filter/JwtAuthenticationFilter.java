@@ -36,9 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        // extract the token
         String token = extractTokenFromBearerToken(request);
 
-        // If no token found, continue filter chain (no authentication set)
+        // If no token found, continue a filter chain (no authentication set)
         if (token == null) {
             filterChain.doFilter(request, response);
             return; // IMPORTANT: return after delegating to chain
@@ -53,7 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             Long userId = jwtService.getUserIdFromToken(token);
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Option A: prefer roles from token (fast, no DB hit)
+                // extracting roles from token
+
                 List<String> roleNames = jwtService.getRolesFromToken(token);
                 Collection<GrantedAuthority> authorities = roleNames.stream()
                         .map(r -> new SimpleGrantedAuthority("ROLE_" + r))

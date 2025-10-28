@@ -1,5 +1,6 @@
 package com.example.JWT.service;
 
+import com.example.JWT.entity.Role;
 import com.example.JWT.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -39,17 +40,14 @@ public class JWTService {
     }
 
     public String generateAccessToken(User user) {
-        // convert roles to a List<String> like ["USER","ADMIN"]
-        List<String> roles = (user.getRoles() == null) ? List.of()
-                : user.getRoles().stream().map(Enum::name).collect(Collectors.toList());
-
+        // setting expiration date for token
         Date now = new Date();
         Date exp = new Date(now.getTime() + expirationMillis);
 
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("email", user.getEmail())
-                .claim("roles", roles)
+                .claim("roles", user.getRoles())
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(secretKey) // Keys.hmacShaKeyFor produced a valid HMAC key

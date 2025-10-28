@@ -16,6 +16,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private  ModelMapper modelMapper;
+    private  final ModelMapper modelMapper;
 
     public UserDto signUp(SignUpDto signUpDto) {
         if (userRepository.findByEmail(signUpDto.getEmail()).isPresent()) {
@@ -35,8 +36,8 @@ public class AuthService {
         }
 
         // Default role is USER if none provided
-        Set<Role> roles = (signUpDto.getRoles() == null || signUpDto.getRoles().isEmpty())
-                ? Set.of(Role.USER)
+        List<Role> roles = (signUpDto.getRoles() == null || signUpDto.getRoles().isEmpty())
+                ? List.of(Role.USER)
                 : signUpDto.getRoles();
 
         User user = User.builder()
