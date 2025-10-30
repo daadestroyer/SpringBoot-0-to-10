@@ -1,5 +1,6 @@
 package com.example.JWT.controller;
 
+import com.example.JWT.dto.JwtTokenResponse;
 import com.example.JWT.dto.LoginDto;
 import com.example.JWT.dto.SignUpDto;
 import com.example.JWT.dto.UserDto;
@@ -11,10 +12,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,12 +34,26 @@ public class AuthController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto, HttpServletRequest request, HttpServletResponse response){
-        String token = authService.login(loginDto);
+        JwtTokenResponse jwtTokenResponse = authService.login(loginDto);
 
-        // setting jwt token in cookie also
-        Cookie cookie = new Cookie("token", token);
+        // setting refresh token in cookie also
+        Cookie cookie = new Cookie("refreshToken", jwtTokenResponse.getRefreshToken());
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
-        return new ResponseEntity<>(token,HttpStatus.OK);
+        return new ResponseEntity<>(jwtTokenResponse,HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = Arrays
+                .stream(cookies)
+                .filter(cookie -> cookie.getName().equals("refreshToken"))
+                .findFirst()
+                .map(cookie -> cookie.getValue())
+                .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found inside the Cookies"));
+
+        JwtTokenResponse jwtTokenResponse = authService.refreshToken(refreshToken);
+        return new ResponseEntity<>(jwtTokenResponse,HttpStatus.OK);
     }
 }

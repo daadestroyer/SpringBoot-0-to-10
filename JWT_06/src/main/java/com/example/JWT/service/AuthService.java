@@ -1,11 +1,13 @@
 package com.example.JWT.service;
 
+import com.example.JWT.dto.JwtTokenResponse;
 import com.example.JWT.dto.LoginDto;
 import com.example.JWT.dto.SignUpDto;
 import com.example.JWT.dto.UserDto;
 import com.example.JWT.entity.Role;
 import com.example.JWT.entity.User;
 import com.example.JWT.repository.UserRepository;
+import com.sun.jdi.event.ExceptionEvent;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,57 +30,42 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private  final ModelMapper modelMapper;
-
+    private final ModelMapper modelMapper;
+    private final UserService userService;
     public UserDto signUp(SignUpDto signUpDto) {
         if (userRepository.findByEmail(signUpDto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("User with email " + signUpDto.getEmail() + " already exists");
         }
-
-        // Default role is USER if none provided
-        List<Role> roles = (signUpDto.getRoles() == null || signUpDto.getRoles().isEmpty())
-                ? List.of(Role.USER)
-                : signUpDto.getRoles();
-
         User user = User.builder()
                 .email(signUpDto.getEmail())
                 .password(passwordEncoder.encode(signUpDto.getPassword()))
                 .name(signUpDto.getName())
-                .roles(roles)
+                .roles(signUpDto.getRoles())
                 .build();
 
         User savedUser = userRepository.save(user);
-
-        // Map to UserDto
-
         return modelMapper.map(savedUser, UserDto.class);
     }
-    public String login(LoginDto loginDto) {
+
+    public JwtTokenResponse login(LoginDto loginDto) {
         try {
-            Authentication auth = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
             );
-
-            // Principal is your User (implements UserDetails)
-            Object principal = auth.getPrincipal();
-            User user;
-            if (principal instanceof User) {
-                user = (User) principal;
-            } else {
-                // As a fallback, load user from DB
-                user = userRepository.findByEmail(loginDto.getEmail())
-                        .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
-            }
-
-            // generate token using the JWTService (includes roles claim etc.)
-            return jwtService.generateAccessToken(user);
-
-        } catch (BadCredentialsException ex) {
-            // rethrow so controller / exception handler can map to 401
-            throw ex;
-        } catch (AuthenticationException ex) {
-            // convert other authentication exceptions to BadCredentials for simplicity
-            throw new BadCredentialsException("Invalid credentials");
+            User user = (User) authentication.getPrincipal();
+            String accessToken = jwtService.generateAccessToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
+            return new JwtTokenResponse(user.getId(),accessToken,refreshToken);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public JwtTokenResponse refreshToken(String refreshToken) {
+        // check if the refresh token is valid or not
+        Long userId = jwtService.getUserIdFromToken(refreshToken);
+        User user = userService.getUserById(userId);
+        String accessToken = jwtService.generateAccessToken(user);
+        return new JwtTokenResponse(user.getId(),accessToken,refreshToken);
     }
 }

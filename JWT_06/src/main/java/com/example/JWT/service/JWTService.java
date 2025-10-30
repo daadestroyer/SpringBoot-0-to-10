@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -23,10 +26,7 @@ public class JWTService {
 
     @Value("${jwt.secretKey}")
     private String jwtSecretKey;
-
-    // default 10 minutes in millis, can override in application.properties
-    @Value("${jwt.expirationMillis:600000}")
-    private long expirationMillis;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000 * 60 * 2;
 
     private SecretKey secretKey;
 
@@ -42,7 +42,7 @@ public class JWTService {
     public String generateAccessToken(User user) {
         // setting expiration date for token
         Date now = new Date();
-        Date exp = new Date(now.getTime() + expirationMillis);
+        Date exp = new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME);
 
         return Jwts.builder()
                 .setSubject(user.getId().toString())
@@ -50,7 +50,20 @@ public class JWTService {
                 .claim("roles", user.getRoles())
                 .setIssuedAt(now)
                 .setExpiration(exp)
-                .signWith(secretKey) // Keys.hmacShaKeyFor produced a valid HMAC key
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        Date expirationDate = Date.from(ZonedDateTime.now().plusMonths(6).toInstant());
+
+        return Jwts.builder()
+                .setSubject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("roles", user.getRoles())
+                .setIssuedAt(new Date())
+                .setExpiration(expirationDate)
+                .signWith(secretKey)
                 .compact();
     }
 
