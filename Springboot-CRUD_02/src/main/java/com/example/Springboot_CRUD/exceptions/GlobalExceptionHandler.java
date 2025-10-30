@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,4 +26,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handleAuthenticationException(AuthenticationException ex){
+        ApiResponse apiResponse = new ApiResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED,"403");
+        return new ResponseEntity<>(apiResponse,HttpStatus.UNAUTHORIZED);
+    }
 }
