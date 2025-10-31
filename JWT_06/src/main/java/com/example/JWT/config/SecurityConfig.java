@@ -21,7 +21,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
-
+    private final static String[] publicRoutes = {
+            "/public/**", "/auth/**", "/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**","/home"
+    };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -31,11 +33,10 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         // public endpoints
-                        .requestMatchers("/public/**", "/auth/**").permitAll()
-                        .requestMatchers("/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**","/home").permitAll()
+                        .requestMatchers(publicRoutes).permitAll()
 
                         // more specific: only ADMIN can create posts
-                        .requestMatchers(HttpMethod.POST, "/posts/create-post").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/posts/create-post").hasAnyRole("ADMIN","CREATOR")
 
                         // allow GET (and other non-creating operations) to authenticated USER or ADMIN
                         .requestMatchers(HttpMethod.GET, "/posts/**").hasAnyRole("USER", "ADMIN")
