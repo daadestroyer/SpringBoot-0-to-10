@@ -10,4 +10,4 @@
 
 5. [Form Login](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/SpringSecurity-FormLogin_05)
 
-6. [JWT Authentication and Authorization , Access Token & Refresh Token](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/JWT_06)
+6. [JWT Authentication and Authorization , Access Token & Refresh Token, Google OAuth2 Login and Logout](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/JWT_06)

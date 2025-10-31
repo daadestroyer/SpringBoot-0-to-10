@@ -14,4 +14,5 @@ public class PublicController {
     public ResponseEntity<?> publicAPI(){
         return new ResponseEntity<>("Accessed public api", HttpStatus.OK);
     }
+
 }
