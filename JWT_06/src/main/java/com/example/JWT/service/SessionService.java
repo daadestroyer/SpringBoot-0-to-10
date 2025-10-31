@@ -41,7 +41,9 @@ public class SessionService {
     }
 
     public void validateSession(String refreshToken) {
-        Session session = sessionRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new SessionAuthenticationException("Session not found for refreshToken"));
+        Session session = sessionRepository
+                .findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new SessionAuthenticationException("Session not found for refreshToken"));
         log.info("User session validated");
         // updating last used time when every time we are using refresh token
 
