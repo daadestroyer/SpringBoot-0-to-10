@@ -8,6 +8,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class JWTService {
 
     @Value("${jwt.secretKey}")
@@ -43,7 +45,7 @@ public class JWTService {
         // setting expiration date for token
         Date now = new Date();
         Date exp = new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME);
-
+        log.info("Access token generated");
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("email", user.getEmail())
@@ -52,11 +54,12 @@ public class JWTService {
                 .setExpiration(exp)
                 .signWith(secretKey)
                 .compact();
+
     }
 
     public String generateRefreshToken(User user) {
         Date expirationDate = Date.from(ZonedDateTime.now().plusMonths(6).toInstant());
-
+        log.info("Refresh token generated");
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("email", user.getEmail())

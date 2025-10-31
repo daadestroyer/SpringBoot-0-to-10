@@ -32,6 +32,8 @@ public class AuthService {
     private final JWTService jwtService;
     private final ModelMapper modelMapper;
     private final UserService userService;
+    private final SessionService sessionService;
+
     public UserDto signUp(SignUpDto signUpDto) {
         if (userRepository.findByEmail(signUpDto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("User with email " + signUpDto.getEmail() + " already exists");
@@ -55,6 +57,7 @@ public class AuthService {
             User user = (User) authentication.getPrincipal();
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
+            sessionService.generateNewSession(user,refreshToken);
             return new JwtTokenResponse(user.getId(),accessToken,refreshToken);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -64,6 +67,10 @@ public class AuthService {
     public JwtTokenResponse refreshToken(String refreshToken) {
         // check if the refresh token is valid or not
         Long userId = jwtService.getUserIdFromToken(refreshToken);
+
+        // check if session is valid or not(by checking if refresh token is present in db or not we can check)
+        sessionService.validateSession(refreshToken);
+
         User user = userService.getUserById(userId);
         String accessToken = jwtService.generateAccessToken(user);
         return new JwtTokenResponse(user.getId(),accessToken,refreshToken);
