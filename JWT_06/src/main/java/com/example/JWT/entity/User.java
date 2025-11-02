@@ -18,17 +18,13 @@ import java.util.stream.Collectors;
 @ToString
 @Builder
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(unique = true, nullable = false)
     private String email;
-
     @Column(nullable = false)
     private String password;
-
     private String name;
 
     // Store user roles as strings in a separate join table
@@ -39,7 +35,6 @@ public class User implements UserDetails {
     )
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

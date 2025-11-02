@@ -3,6 +3,8 @@ package com.example.JWT.controller;
 import com.example.JWT.dto.PostDto;
 import com.example.JWT.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +17,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<PostDto> getAllPosts() {
         return postService.getAllPosts();
     }
@@ -25,6 +28,7 @@ public class PostController {
     }
 
     @PostMapping("/create-post")
+    @PreAuthorize("hasRole('ADMIN')")
     public PostDto createNewPost(@RequestBody PostDto inputPost) {
         return postService.createNewPost(inputPost);
     }
