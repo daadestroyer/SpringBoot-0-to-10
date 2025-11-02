@@ -9,6 +9,7 @@ import com.example.JWT.entity.User;
 import com.example.JWT.repository.UserRepository;
 import com.sun.jdi.event.ExceptionEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,6 +25,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -38,13 +40,9 @@ public class AuthService {
         if (userRepository.findByEmail(signUpDto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("User with email " + signUpDto.getEmail() + " already exists");
         }
-        User user = User.builder()
-                .email(signUpDto.getEmail())
-                .password(passwordEncoder.encode(signUpDto.getPassword()))
-                .name(signUpDto.getName())
-                .roles(signUpDto.getRoles())
-                .build();
-
+        User user = modelMapper.map(signUpDto, User.class);
+        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        log.info("User details before signup"+user);
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }

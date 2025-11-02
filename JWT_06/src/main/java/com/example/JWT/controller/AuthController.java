@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -23,12 +24,14 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto){
+        log.info("Signup Dto details"+signUpDto);
         UserDto userDto =  authService.signUp(signUpDto);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }

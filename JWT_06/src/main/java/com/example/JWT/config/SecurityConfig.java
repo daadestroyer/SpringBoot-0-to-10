@@ -1,5 +1,6 @@
 package com.example.JWT.config;
 
+import com.example.JWT.entity.Permission;
 import com.example.JWT.filter.JwtAuthenticationFilter;
 import com.example.JWT.handler.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
@@ -22,42 +23,60 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final static String[] publicRoutes = {
-            "/public/**", "/auth/**", "/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**","/home"
+            "/public/**", "/auth/**", "/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**", "/home"
     };
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable) // if you store JWT in cookies, re-evaluate CSRF
+    // WORKING WITH DIFFERENT ROLES
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(AbstractHttpConfigurer::disable) // if you store JWT in cookies, re-evaluate CSRF
+//
+//                // allow session only when needed (OAuth2 needs it)
+//                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+//                .authorizeHttpRequests(auth -> auth
+//                        // public endpoints
+//                        .requestMatchers(publicRoutes).permitAll()
+//                        // more specific: only ADMIN can create posts
+//                        .requestMatchers(HttpMethod.POST, "/posts/create-post").hasAnyRole("ADMIN","CREATOR")
+//
+//                        // allow GET (and other non-creating operations) to authenticated USER or ADMIN
+//                        .requestMatchers(HttpMethod.GET, "/posts/**").hasAnyRole("USER", "ADMIN")
+//
+//                        // any other request must be authenticated
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
-                // allow session only when needed (OAuth2 needs it)
+    /// /                .oauth2Login(oauth2config ->
+    /// /                        oauth2config
+    /// /                                .failureUrl("/login?error=true")
+    /// /                                .successHandler(oAuth2SuccessHandler) //
+    /// /                )
+//                .logout(logout->logout
+//                        .logoutUrl("/logout")
+//                        .logoutSuccessUrl("/login?logout=true")
+//                        .deleteCookies("refreshToken")
+//                        .invalidateHttpSession(true)
+//                        .clearAuthentication(true)
+//                );
+//
+//        return http.build();
+//    }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        // public endpoints
                         .requestMatchers(publicRoutes).permitAll()
-
-                        // more specific: only ADMIN can create posts
-                        .requestMatchers(HttpMethod.POST, "/posts/create-post").hasAnyRole("ADMIN","CREATOR")
-
-                        // allow GET (and other non-creating operations) to authenticated USER or ADMIN
-                        .requestMatchers(HttpMethod.GET, "/posts/**").hasAnyRole("USER", "ADMIN")
-
-                        // any other request must be authenticated
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/post/**").hasAuthority(Permission.POST_CREATE.name())
+                        .requestMatchers(HttpMethod.GET, "/post/**").hasAuthority(Permission.POST_VIEW.name())
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login(oauth2config ->
-                        oauth2config
-                                .failureUrl("/login?error=true")
-                                .successHandler(oAuth2SuccessHandler) //
-                )
-                .logout(logout->logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
-                        .deleteCookies("refreshToken")
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
+                .oauth2Login(oauth2Config -> oauth2Config
+                        .failureUrl("/login?error=true")
+                        .successHandler(oAuth2SuccessHandler)
                 );
-
         return http.build();
     }
 

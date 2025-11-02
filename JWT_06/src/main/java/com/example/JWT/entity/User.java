@@ -1,4 +1,6 @@
 package com.example.JWT.entity;
+
+import com.example.JWT.util.PermissionMapping;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,27 +38,29 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id")
     )
     @Enumerated(EnumType.STRING)
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles;
 
-    public User(Long id, String email, String password, List<Role> roles) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                .collect(Collectors.toSet());
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        roles.forEach(role -> {
+            Set<SimpleGrantedAuthority> permission = PermissionMapping.getAuthoritiesForRole(role);
+            authorities.addAll(permission);
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        });
+        return authorities;
     }
 
     @Override
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
     @Override
-    public String getUsername() { return email; }
+    public String getUsername() {
+        return email;
+    }
 
 
 }

@@ -10,4 +10,11 @@
 
 5. [Form Login](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/SpringSecurity-FormLogin_05)
 
-6. [JWT Authentication and Authorization , Access Token & Refresh Token, Google OAuth2 Login and Logout, Session Management with JWT Refresh Token](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/JWT_06)
+6. [Spring Security](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/JWT_06)
+   - JWT Authentication and Authorization
+   - Access Token & Refresh Token Implementation
+   - Google OAuth2 Login and Logout Integration
+   - 🧭 Session Management using JWT Refresh Token
+   - 🛡 Role-based Authorization
+   - 🎯 Granular Authorization with Authorities and Permissions
+   - Security methods Annotations @Secured and @PreAuthorize

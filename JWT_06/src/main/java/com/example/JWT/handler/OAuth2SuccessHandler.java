@@ -51,7 +51,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     .name(oAuth2User.getAttribute("name"))
                     .email(email)
                     .password(encoded)
-                    .roles(Collections.singletonList(Role.USER))
+                    .roles(user.getRoles())
                     .build();
             user = userService.saveUser(user);
         }
