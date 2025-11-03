@@ -18,3 +18,5 @@
    - 🛡 Role-based Authorization
    - 🎯 Granular Authorization with Authorities and Permissions
    - Security methods Annotations @Secured and @PreAuthorize
+
+7. [JUnit and Mockito](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/SpringBootTesting_07)
