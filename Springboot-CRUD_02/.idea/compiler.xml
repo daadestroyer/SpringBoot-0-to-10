@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="SpringBootTesting_07" />
         <module name="SpringSecurity-FormLogin_04" />
         <module name="introduction" />
         <module name="SpringSecurity-BasicAuth_04" />
@@ -40,6 +41,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="JWT" options="-parameters" />
       <module name="SecurityApp" options="-parameters" />
+      <module name="SpringBootTesting_07" options="-parameters" />
       <module name="SpringSecurity-BasicAuth_04" options="-parameters" />
       <module name="SpringSecurity-FormLogin_04" options="-parameters" />
       <module name="Springboot-CRUD" options="-parameters" />
