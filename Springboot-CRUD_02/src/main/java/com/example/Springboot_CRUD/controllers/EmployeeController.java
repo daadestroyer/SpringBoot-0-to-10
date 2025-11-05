@@ -19,12 +19,6 @@ import java.util.*;
 @RequestMapping(path = "/employees")
 public class EmployeeController {
 
-//    @GetMapping(path = "/getSecretMessage")
-//    public String getMySuperSecretMessage() {
-//        return "Secret message: asdfal@#$DASD";
-//    }
-
-
     private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
