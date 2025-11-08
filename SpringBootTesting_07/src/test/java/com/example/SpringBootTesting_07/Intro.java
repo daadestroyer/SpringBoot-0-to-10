@@ -6,7 +6,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class App1 {
+class Intro {
 	@Test
 	public void test1(){
 		int a = 5;
