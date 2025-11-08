@@ -20,15 +20,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final ModelMapper modelMapper;
 
     @Override
-    public EmployeeDto getEmployeeById(Long id) {
+    public EmployeeDto getEmployeeById(Long id) { // TODO 2 : mock this method
         log.info("Fetching employee with id: {}", id);
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository.findById(id) //TODO 1 : mock this call
                 .orElseThrow(() -> {
                     log.error("Employee not found with id: {}", id);
                     return new ResourceNotFoundException("Employee not found with id: " + id);
                 });
         log.info("Successfully fetched employee with id: {}", id);
-        return modelMapper.map(employee, EmployeeDto.class);
+        return modelMapper.map(employee, EmployeeDto.class); // no need to mock modemapper
     }
 
     @Override

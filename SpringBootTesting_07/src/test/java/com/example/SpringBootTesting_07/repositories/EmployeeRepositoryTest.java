@@ -1,5 +1,6 @@
 package com.example.SpringBootTesting_07.repositories;
 
+import com.example.SpringBootTesting_07.TestContainerConfiguration;
 import com.example.SpringBootTesting_07.entities.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Testcontainers
+@Import(TestContainerConfiguration.class)
 class EmployeeRepositoryTest {
 
     @Autowired
@@ -27,23 +28,6 @@ class EmployeeRepositoryTest {
 
     private Employee employee;
 
-    @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
-
-    // inject container properties into Spring Environment before context refresh
-    @DynamicPropertySource
-    static void overrideProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
-        // ensure schema is created for tests
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
-        registry.add("spring.jpa.show-sql", () -> "true");
-    }
 
     @BeforeEach
     void setUp() {
