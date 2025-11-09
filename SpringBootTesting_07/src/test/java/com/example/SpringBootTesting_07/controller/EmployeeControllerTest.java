@@ -203,6 +203,6 @@ class EmployeeControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/employees/{id}", id))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
     }
 }

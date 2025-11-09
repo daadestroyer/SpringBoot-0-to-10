@@ -12,6 +12,15 @@
         <module name="introduction" />
         <module name="SpringSecurity-BasicAuth_04" />
       </profile>
+      <profile name="Annotation profile for JWT" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="JWT" />
+      </profile>
       <profile name="Annotation profile for restclient" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -21,16 +30,6 @@
         </processorPath>
         <module name="restclient" />
         <module name="Springboot-CRUD" />
-      </profile>
-      <profile name="Annotation profile for JWT" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-        </processorPath>
-        <module name="JWT" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
