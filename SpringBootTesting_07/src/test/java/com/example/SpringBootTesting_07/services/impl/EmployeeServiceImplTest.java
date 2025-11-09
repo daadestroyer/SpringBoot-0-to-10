@@ -3,6 +3,7 @@ package com.example.SpringBootTesting_07.services.impl;
 import com.example.SpringBootTesting_07.TestContainerConfiguration;
 import com.example.SpringBootTesting_07.dto.EmployeeDto;
 import com.example.SpringBootTesting_07.entities.Employee;
+import com.example.SpringBootTesting_07.exceptions.ResourceNotFoundException;
 import com.example.SpringBootTesting_07.repositories.EmployeeRepository;
 import com.example.SpringBootTesting_07.services.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.client.ResourceAccessException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
@@ -45,6 +47,7 @@ class EmployeeServiceImplTest {
     private Employee mockEmployee;
 
     private EmployeeDto mockEmployeeDto;
+    private EmployeeDto mockUpdateEmployeeDto;
 
     @BeforeEach
     void setUp() {
@@ -57,7 +60,15 @@ class EmployeeServiceImplTest {
                 .build();
 
         mockEmployeeDto = modelMapper.map(mockEmployee, EmployeeDto.class);
+
+        mockUpdateEmployeeDto = EmployeeDto.builder()
+                .id(1L)
+                .email("shubham@gmail.com") // must match existing email for positive case
+                .name("Shubham Updated")
+                .salary(500L)
+                .build();
     }
+
 
     @Test
     void testGetEmployeeById_whenEmployeeIdIsPresent_thenReturnEmployee() {
@@ -74,6 +85,23 @@ class EmployeeServiceImplTest {
         verify(employeeRepository).findById(mockEmployee.getId()); // here we are checking if findById() of employeeRepository is being call or not
         // verify(employeeRepository).save(null); // here we are checking save method in employeeRepository is being called or not, which is actually not called
         // verify(employeeRepository,times(2)).findById(id); // here we are checking that if findById method inside employeeRepository is being called 2 times or not
+    }
+
+    @Test
+    void testGetEmployeeById_whenEmployeeIdIsNotPresent_thenThrowException() {
+        // arrange
+        Long employeeId = 999L;
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+        // act
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
+                () -> employeeService.getEmployeeById(employeeId));
+
+        assertThat(ex.getMessage()).isEqualTo("Employee not found with id: " + employeeId);
+
+        // assert
+        verify(employeeRepository, times(1)).findById(employeeId);
+
     }
 
     @Test
@@ -100,7 +128,7 @@ class EmployeeServiceImplTest {
     }
 
     @Test
-    void createNewEmployee_whenEmailAlreadyExists_shouldThrowRuntimeException() {
+    void testCreateNewEmployee_whenEmailAlreadyExists_shouldThrowRuntimeException() {
         // assign
         when(employeeRepository.findByEmail(mockEmployeeDto.getEmail())).thenReturn(List.of(mockEmployee));
 
@@ -109,7 +137,113 @@ class EmployeeServiceImplTest {
         assertThat(ex.getMessage()).contains("Employee already exists with email");
 
         // verify that save was never called
-        verify(employeeRepository,never()).save(any(Employee.class));
+        verify(employeeRepository, never()).save(any(Employee.class));
 
+    }
+
+    @Test
+    void updateEmployee_whenIdExistsAndEmailUnchanged_shouldReturnUpdatedDto() {
+        // Arrange
+        mockEmployeeDto = EmployeeDto.builder()
+                .id(mockEmployee.getId())
+                .email(mockEmployee.getEmail())
+                .name(mockEmployee.getName())
+                .salary(mockEmployee.getSalary())
+                .build();
+
+        Long id = mockEmployeeDto.getId();
+        when(employeeRepository.findById(id)).thenReturn(Optional.of(mockEmployee));
+
+        // Simulate modelMapper.map(employeeDto, employee) that copies fields into existing employee
+        doAnswer(invocation -> {
+            EmployeeDto src = invocation.getArgument(0);
+            Employee target = invocation.getArgument(1);
+            // apply fields that would be mapped (except id/email since email must remain same)
+            target.setName(src.getName());
+            target.setSalary(src.getSalary());
+            return target;
+        }).when(modelMapper).map(any(EmployeeDto.class), any(Employee.class));
+
+        // After save, return same employee (with updated values)
+        when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When mapping back to DTO, return a DTO reflecting updated values
+        EmployeeDto returnedDto = EmployeeDto.builder()
+                .id(id)
+                .email(mockEmployee.getEmail())
+                .name(mockUpdateEmployeeDto.getName())   // or mockEmployeeDto.getName() depending on what you pass
+                .salary(mockUpdateEmployeeDto.getSalary())
+                .build();
+        doReturn(returnedDto).when(modelMapper).map(any(Employee.class), eq(EmployeeDto.class));
+
+        // Act
+        EmployeeDto result = employeeService.updateEmployee(id, mockUpdateEmployeeDto);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(id);
+        assertThat(result.getEmail()).isEqualTo(mockEmployee.getEmail());
+        assertThat(result.getName()).isEqualTo(mockUpdateEmployeeDto.getName());
+        assertThat(result.getSalary()).isEqualTo(mockUpdateEmployeeDto.getSalary());
+
+        verify(employeeRepository).findById(id);
+        verify(modelMapper).map(mockUpdateEmployeeDto, mockEmployee); // mapped into existing entity
+        verify(employeeRepository).save(mockEmployee);
+    }
+
+    @Test
+    void updateEmployee_whenEmailChanged_shouldThrowRuntimeException() {
+        // Arrange
+        Long id = mockEmployee.getId();
+        when(employeeRepository.findById(id)).thenReturn(Optional.of(mockEmployee));
+
+        // DTO with a different email -> should trigger RuntimeException
+        EmployeeDto dtoWithDifferentEmail = EmployeeDto.builder()
+                .id(id)
+                .email("different@gmail.com") // different from mockEmployee.email
+                .name("Some Name")
+                .salary(123L)
+                .build();
+
+        // Act + Assert
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> employeeService.updateEmployee(id, dtoWithDifferentEmail));
+
+        assertThat(ex.getMessage()).isEqualTo("The email of the employee cannot be updated");
+
+        // Verfiy
+        verify(employeeRepository).findById(id);
+        verify(modelMapper, never()).map(any(EmployeeDto.class), any(Employee.class));
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void test_deleteEmployee_whenIdExists_shouldDelete() {
+        // Arrange
+        Long id = mockEmployeeDto.getId();
+        when(employeeRepository.existsById(id)).thenReturn(true);
+
+        // doNothing is the default for void methods but be explicit
+        doNothing().when(employeeRepository).deleteById(id);
+
+        // Act
+        employeeService.deleteEmployee(id);
+
+        // Assert
+        verify(employeeRepository).existsById(id);
+        verify(employeeRepository).deleteById(id);
+    }
+
+    @Test
+    void test_deleteEmployeeWhenIdNotExists_shouldThrowResourceNotFoundException(){
+        // Arrange
+        Long id = 999L;
+        when(employeeRepository.existsById(id)).thenReturn(false);
+
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> employeeService.deleteEmployee(id));
+
+        assertThat(ex.getMessage()).isEqualTo("Employee not found with id: "+id);
+
+        verify(employeeRepository).existsById(id);
+        verify(employeeRepository,never()).deleteById(anyLong());
     }
 }
