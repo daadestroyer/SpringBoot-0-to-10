@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="SpringBootTesting_07" />
         <module name="SpringSecurity-FormLogin_04" />
+        <module name="spring-profiles-08" />
         <module name="introduction" />
         <module name="SpringSecurity-BasicAuth_04" />
       </profile>
@@ -34,6 +35,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="SecurityApp" target="17" />
+      <module name="TestingApp" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -44,8 +46,10 @@
       <module name="SpringSecurity-BasicAuth_04" options="-parameters" />
       <module name="SpringSecurity-FormLogin_04" options="-parameters" />
       <module name="Springboot-CRUD" options="-parameters" />
+      <module name="TestingApp" options="-parameters" />
       <module name="introduction" options="-parameters" />
       <module name="restclient" options="-parameters" />
+      <module name="spring-profiles-08" options="-parameters" />
     </option>
   </component>
 </project>

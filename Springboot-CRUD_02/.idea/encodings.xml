@@ -10,5 +10,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../introduction_01/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../restclient_03/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../spring-boot-profiles_08/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../spring-profiles-08/src/main/java" charset="UTF-8" />
   </component>
 </project>
