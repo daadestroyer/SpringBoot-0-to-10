@@ -20,3 +20,4 @@
    - Security methods Annotations @Secured and @PreAuthorize
 
 7. [JUnit and Mockito](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/SpringBootTesting_07)
+8. [Spring Boot Profiling](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/spring-profiles-08)
