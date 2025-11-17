@@ -21,3 +21,4 @@
 
 7. [JUnit and Mockito](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/SpringBootTesting_07)
 8. [Spring Boot Profiling](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/spring-profiles-08)
+9. [Spring Redis Cache](https://github.com/daadestroyer/SpringBoot-0-to-100/tree/main/CachingApp_09/src/main/java/com/example/CachingApp)

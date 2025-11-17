@@ -1,4 +1,4 @@
-package com.example.Springboot_CRUD.annotations;
+package com.example.spring_profiles_08.annotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

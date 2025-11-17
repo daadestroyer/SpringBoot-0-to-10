@@ -1,7 +1,5 @@
-package com.example.Springboot_CRUD.exceptions;
+package com.example.spring_profiles_08.exception;
 
-import lombok.Builder;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 

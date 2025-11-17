@@ -9,18 +9,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="SpringBootTesting_07" />
         <module name="SpringSecurity-FormLogin_04" />
-        <module name="spring-profiles-08" />
         <module name="introduction" />
         <module name="SpringSecurity-BasicAuth_04" />
-      </profile>
-      <profile name="Annotation profile for JWT" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-        </processorPath>
-        <module name="JWT" />
+        <module name="CachingApp" />
       </profile>
       <profile name="Annotation profile for restclient" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -32,21 +23,26 @@
         <module name="restclient" />
         <module name="Springboot-CRUD" />
       </profile>
+      <profile name="Annotation profile for spring-profiles-08" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="spring-profiles-08" />
+        <module name="JWT" />
+      </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="SecurityApp" target="17" />
-      <module name="TestingApp" target="21" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="CachingApp" options="-parameters" />
       <module name="JWT" options="-parameters" />
-      <module name="SecurityApp" options="-parameters" />
       <module name="SpringBootTesting_07" options="-parameters" />
       <module name="SpringSecurity-BasicAuth_04" options="-parameters" />
       <module name="SpringSecurity-FormLogin_04" options="-parameters" />
       <module name="Springboot-CRUD" options="-parameters" />
-      <module name="TestingApp" options="-parameters" />
       <module name="introduction" options="-parameters" />
       <module name="restclient" options="-parameters" />
       <module name="spring-profiles-08" options="-parameters" />
